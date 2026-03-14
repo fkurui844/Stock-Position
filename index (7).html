@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KCC Stock Entry</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink:       #0f1923;
+    --paper:     #f5f0e8;
+    --cream:     #ede8de;
+    --accent:    #c8401a;
+    --accent2:   #1a6c8c;
+    --gold:      #d4a017;
+    --success:   #1a7a4a;
+    --border:    #c9c1b4;
+    --mono:      'DM Mono', monospace;
+    --display:   'Syne', sans-serif;
+    --body:      'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(0,0,0,0.04) 39px, rgba(0,0,0,0.04) 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(0,0,0,0.02) 39px, rgba(0,0,0,0.02) 40px);
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 3px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+  .header-brand { display: flex; align-items: center; gap: 12px; }
+  .header-logo {
+    width: 38px; height: 38px;
+    background: var(--accent);
+    display: grid; place-items: center;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 18px;
+    color: white;
+    clip-path: polygon(0 0, 100% 0, 100% 75%, 85% 100%, 0 100%);
+  }
+  .header-title { font-family: var(--display); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.02em; }
+  .header-sub { font-family: var(--mono); font-size: 0.65rem; opacity: 0.5; margin-top: 1px; }
+  .header-date {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    background: rgba(255,255,255,0.08);
+    padding: 6px 12px;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+
+  /* ── MAIN ── */
+  main { max-width: 880px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+  /* ── STEP INDICATOR ── */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+  }
+  .step {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: #999;
+    border-right: 1.5px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+  }
+  .step:last-child { border-right: none; }
+  .step.active { background: var(--ink); color: var(--paper); }
+  .step.done   { background: var(--success); color: white; cursor: default; }
+  .step-num {
+    width: 22px; height: 22px;
+    border: 1.5px solid currentColor;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 0.68rem;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .step.done .step-num::after { content: '✓'; }
+  .step.done .step-num span { display: none; }
+
+  /* ── CARD ── */
+  .card {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-top: 4px solid var(--accent);
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    box-shadow: 4px 4px 0 var(--cream);
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .card-title {
+    font-family: var(--display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field { margin-bottom: 1.25rem; }
+  label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #444;
+  }
+  label span { color: var(--accent); margin-left: 2px; }
+
+  select, input[type="text"], input[type="number"], input[type="date"], textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    background: var(--paper);
+    font-family: var(--body);
+    font-size: 0.92rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  select:focus, input:focus, textarea:focus {
+    border-color: var(--accent2);
+    background: white;
+  }
+  select { cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+
+  /* ── PRODUCT TABLE ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 2rem 0 1rem;
+  }
+  .section-divider span {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #888;
+    white-space: nowrap;
+  }
+  .section-divider::before, .section-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .category-block { margin-bottom: 2rem; }
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--display);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1px;
+  }
+  .cat-badge {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    background: var(--accent);
+    padding: 2px 7px;
+    letter-spacing: 0.08em;
+  }
+
+  .product-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 130px;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-top: none;
+    background: white;
+    transition: background 0.15s;
+  }
+  .product-row:hover { background: #fdfaf6; }
+  .product-row:nth-child(even) { background: #faf8f4; }
+  .product-row:nth-child(even):hover { background: #fdfaf6; }
+
+  .prod-code {
+    padding: 10px 8px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: #888;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .prod-name {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid var(--border);
+    line-height: 1.3;
+  }
+  .prod-qty input {
+    border: none;
+    border-left: none;
+    background: transparent;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    font-weight: 500;
+    height: 100%;
+    padding: 0 8px;
+    min-width: 130px;
+  }
+  .prod-qty input:focus { background: #fff8f0; outline: 2px solid var(--accent); outline-offset: -2px; }
+  .prod-qty input::placeholder { color: #ccc; font-size: 0.8rem; font-family: var(--body); }
+
+  /* ── BUTTONS ── */
+  .btn-row { display: flex; gap: 1rem; margin-top: 2rem; justify-content: flex-end; }
+  .btn {
+    padding: 12px 28px;
+    font-family: var(--display);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    border: 2px solid var(--ink);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary { background: var(--ink); color: var(--paper); }
+  .btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+  .btn-ghost { background: transparent; color: var(--ink); }
+  .btn-ghost:hover { background: var(--cream); }
+  .btn-success { background: var(--success); color: white; border-color: var(--success); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* ── TOAST / STATUS ── */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 14px 22px;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    max-width: 340px;
+    z-index: 999;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast.success { background: var(--success); color: white; border-left: 4px solid #0d5c35; }
+  #toast.error   { background: var(--accent); color: white; border-left: 4px solid #8b1a0a; }
+  #toast.info    { background: var(--ink); color: var(--paper); border-left: 4px solid var(--accent2); }
+
+  /* ── SUCCESS SCREEN ── */
+  #success-screen {
+    display: none;
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  .success-icon {
+    width: 80px; height: 80px;
+    background: var(--success);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2rem;
+  }
+  #success-screen h2 { font-family: var(--display); font-size: 2rem; margin-bottom: 0.75rem; }
+  #success-screen p  { color: #666; margin-bottom: 2rem; font-size: 0.95rem; }
+
+  /* ── SUMMARY PREVIEW ── */
+  .summary-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-bottom: 1.5rem; }
+  .summary-table th {
+    background: var(--ink); color: var(--paper);
+    padding: 8px 12px;
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+  }
+  .summary-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .summary-table tr:nth-child(even) td { background: var(--cream); }
+  .qty-zero { color: #ccc; font-family: var(--mono); }
+  .qty-val  { font-family: var(--mono); font-weight: 600; color: var(--success); }
+
+  /* ── CONFIG NOTICE ── */
+  .config-notice {
+    background: #fff8e6;
+    border: 1.5px solid var(--gold);
+    border-left: 4px solid var(--gold);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    display: flex;
+    gap: 10px;
+  }
+  .config-notice .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 2px; }
+
+  @media (max-width: 600px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .steps { flex-direction: column; }
+    .step { border-right: none; border-bottom: 1.5px solid var(--border); }
+    .btn-row { flex-direction: column; }
+    .product-row { grid-template-columns: 50px 1fr 100px; }
+    main { padding: 1.5rem 1rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <div class="header-logo">K</div>
+    <div>
+      <div class="header-title">KCC Stock Entry</div>
+      <div class="header-sub">DAILY STOCK POSITION SYSTEM</div>
+    </div>
+  </div>
+  <div class="header-date" id="header-date"></div>
+</header>
+
+<main>
+
+  <!-- STEP INDICATOR -->
+  <div class="steps" id="step-indicator">
+    <div class="step active" id="step-1">
+      <div class="step-num"><span>1</span></div> Location &amp; Date
+    </div>
+    <div class="step" id="step-2">
+      <div class="step-num"><span>2</span></div> Stock Quantities
+    </div>
+    <div class="step" id="step-3">
+      <div class="step-num"><span>3</span></div> Review &amp; Submit
+    </div>
+  </div>
+
+  <!-- ══ STEP 1: LOCATION & DATE ══ -->
+  <div id="panel-1">
+    </div>
+
+    <div class="card">
+      <div class="card-label">Step 01 of 03</div>
+      <div class="card-title">Who is filling this form?</div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Your Location / Depot <span>*</span></label>
+          <select id="location" required>
+            <option value="">— Select location —</option>
+            <optgroup label="Depots">
+              <option>DANDORA</option>
+              <option>NAIROBI SALES DEPOT</option>
+              <option>ELDORET</option>
+              <option>SOTIK (KERICHO)</option>
+              <option>MIRITINI</option>
+              <option>NAKURU</option>
+              <option>NANYUKI</option>
+              <option>KISUMU</option>
+              <option>NYAHURURU DEPOT</option>
+              <option>NYAMBENE DEPOT</option>
+            </optgroup>
+            <optgroup label="Factories">
+              <option>NYAHURURU FACTORY</option>
+              <option>SOTIK FACTORY</option>
+              <option>ELDORET FACTORY</option>
+              <option>NAIVASHA</option>
+              <option>KIGANJO</option>
+              <option>DANDORA FACTORY</option>
+              <option>KITALE</option>
+              <option>MOMBASA FACTORY</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field">
+          <label>Stock Date <span>*</span></label>
+          <input type="date" id="stock-date" required/>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label>Submitted By <span>*</span></label>
+          <input type="text" id="submitted-by" placeholder="Your full name"/>
+        </div>
+        <div class="field">
+          <label>Section / Department</label>
+          <select id="section">
+            <option value="">— Select section —</option>
+            <option>TFA / Fresh Milk</option>
+            <option>TCA / Long Life</option>
+            <option>ESL / Aseptic</option>
+            <option>UHT</option>
+            <option>Fermented / Mala</option>
+            <option>Butter &amp; Ghee</option>
+            <option>Milk Powder</option>
+            <option>Water</option>
+            <option>All Products</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Notes / Remarks</label>
+        <textarea id="notes" rows="2" placeholder="Any observations, issues, or comments about today's stock..."></textarea>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goToStep2()">
+          Continue to Stock Entry →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: STOCK QUANTITIES ══ -->
+  <div id="panel-2" style="display:none">
+    <div class="card" style="padding-bottom:1rem">
+      <div class="card-label">Step 02 of 03</div>
+      <div class="card-title">Enter Stock Quantities</div>
+      <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem">
+        Enter quantities in <strong>Cartons / Trays / PCS</strong> as applicable. Leave blank or enter 0 if no stock.
+      </p>
+      <div style="font-family:var(--mono);font-size:0.72rem;background:var(--cream);padding:8px 14px;border-left:3px solid var(--accent2);margin-top:0.5rem">
+        Location: <strong id="loc-display">—</strong> &nbsp;|&nbsp; Date: <strong id="date-display">—</strong>
+      </div>
+    </div>
+
+    <div id="product-grid"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goToStep1()">← Back</button>
+      <button class="btn btn-primary" onclick="goToStep3()">Review Submission →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: REVIEW & SUBMIT ══ -->
+  <div id="panel-3" style="display:none">
+    <div class="card">
+      <div class="card-label">Step 03 of 03</div>
+      <div class="card-title">Review &amp; Submit</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+        <div style="background:var(--cream);padding:12px;border:1px solid var(--border)">
+          <div style="font-family:var(--mono);font-size:0.62rem;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.1em">Location</div>
+          <div style="font-weight:700;font-size:0.9rem" id="rev-location">—</div>
+        </div>
+        <div style="background:var(--cream);padding:12px;border:1px solid var(--border)">
+          <div style="font-family:var(--mono);font-size:0.62rem;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.1em">Date</div>
+          <div style="font-weight:700;font-size:0.9rem" id="rev-date">—</div>
+        </div>
+        <div style="background:var(--cream);padding:12px;border:1px solid var(--border)">
+          <div style="font-family:var(--mono);font-size:0.62rem;color:#888;margin-bottom:4px;text-transform:uppercase;letter-spacing:.1em">Submitted By</div>
+          <div style="font-weight:700;font-size:0.9rem" id="rev-name">—</div>
+        </div>
+      </div>
+
+      <div class="section-divider"><span>Products with stock entered</span></div>
+      <table class="summary-table" id="summary-table">
+        <thead>
+          <tr>
+            <th>CODE</th><th>PRODUCT</th><th>CATEGORY</th><th>QUANTITY</th>
+          </tr>
+        </thead>
+        <tbody id="summary-body"></tbody>
+      </table>
+
+      <div style="background:var(--cream);border:1px solid var(--border);padding:12px 16px;font-family:var(--mono);font-size:0.8rem">
+        Total products with stock: <strong id="rev-count">0</strong> &nbsp;|&nbsp;
+        Total cartons: <strong id="rev-total">0</strong>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="goToStep2()">← Edit Quantities</button>
+        <button class="btn btn-success" id="submit-btn" onclick="submitForm()">
+          ✓ Submit to Google Sheets
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SUCCESS ══ -->
+  <div id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>Submission Received</h2>
+    <p>Stock data has been saved to Google Sheets.<br/>The central team can now see your entry.</p>
+    <div style="font-family:var(--mono);font-size:0.78rem;background:var(--cream);display:inline-block;padding:10px 20px;border:1px solid var(--border);margin-bottom:2rem" id="success-ref"></div>
+    <br/>
+    <button class="btn btn-primary" onclick="resetForm()">Submit Another Entry</button>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+// Replace this with your Google Apps Script deployment URL
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxrTDO0VQIOA1G2b18oNrOfOs0he2Rn8pH73zbc8rY5NLWegsOUsGFE2ll0RIIAn1ud/exec';
+
+// ── PRODUCT DATA ─────────────────────────────────────────────────────────────
+const PRODUCTS = [
+  {code:'20',  name:'GOLD CROWN TFA 1/2LT 1x12',         cat:'TFA',         pkg:'Cartons'},
+  {code:'21',  name:'KCC FRESH TFA 1x12 x 1/2lt',        cat:'TFA',         pkg:'Cartons'},
+  {code:'83',  name:'TAIFA TFA 1*12*500ML',               cat:'TFA',         pkg:'Cartons'},
+  {code:'29',  name:'TAIFA TFA 1*24*250ML',               cat:'TFA',         pkg:'Cartons'},
+  {code:'17',  name:'LACTOSE FREE 12*500ML',              cat:'TFA',         pkg:'Cartons'},
+  {code:'23',  name:'GOLD CROWN TCA1 2DCL 1x21',         cat:'TCA',         pkg:'Cartons'},
+  {code:'27',  name:'KCC FRESH TCA1 2DL 1x21',           cat:'TCA',         pkg:'Cartons'},
+  {code:'12',  name:'TAIFA TCA DCL 1*21*200ML',          cat:'TCA',         pkg:'Cartons'},
+  {code:'28',  name:'KCC SCHOOL TCA1 2DL 1x21',          cat:'TCA',         pkg:'Cartons'},
+  {code:'24',  name:'ASEPTIC POUCH 500ML G/C 1*12',      cat:'ESL',         pkg:'Cartons'},
+  {code:'25',  name:'ASEPTIC POUCH 500ML FRESH 1*12',    cat:'ESL',         pkg:'Cartons'},
+  {code:'26A', name:'ESL GOLD CROWN 200ML 1*21',         cat:'ESL',         pkg:'Cartons'},
+  {code:'19',  name:'ESL ASEPTIC POUCH TAIFA 1*12*400ML',cat:'ESL',         pkg:'Cartons'},
+  {code:'30',  name:'ESL KCC FRESH 1*12*450ML',          cat:'ESL',         pkg:'Cartons'},
+  {code:'13',  name:'TAIFA ESL 200ML',                   cat:'ESL',         pkg:'Cartons'},
+  {code:'71',  name:'TBA GC 1LT',                        cat:'UHT',         pkg:'Cartons'},
+  {code:'73C', name:'UHT FULL CREAM 1L',                 cat:'UHT',         pkg:'Cartons'},
+  {code:'73B', name:'UHT FULL CREAM WITH CUPS 1L',       cat:'UHT',         pkg:'Cartons'},
+  {code:'81',  name:'UHT FULL CREAM 500ML',              cat:'UHT',         pkg:'Cartons'},
+  {code:'18',  name:'TBA G/C LACTOSE FREE 1*12*1LT',    cat:'LACTOSE FREE',pkg:'Packs'},
+  {code:'500', name:'GC Water 1*24*300ML',               cat:'WATER',       pkg:'Trays'},
+  {code:'501', name:'GC Water 1*24*500ML',               cat:'WATER',       pkg:'Trays'},
+  {code:'502', name:'GC Water 1*12*1L',                  cat:'WATER',       pkg:'Trays'},
+  {code:'503', name:'GC Water 1*12*1.5LT',               cat:'WATER',       pkg:'Trays'},
+  {code:'88',  name:'PLAIN MALA 1/2LT TRAY',             cat:'FERMENTED',   pkg:'PCS'},
+  {code:'110', name:'MALA TR-1LITRE',                    cat:'FERMENTED',   pkg:'PCS'},
+  {code:'69',  name:'MALA 1L BOTTLE',                    cat:'FERMENTED',   pkg:'PCS'},
+  {code:'65',  name:'12*500ML SLEEVED MALA BOTTLE',      cat:'FERMENTED',   pkg:'Trays'},
+  {code:'201', name:'VANILLA YOGHURT 0.25LT CUPS',       cat:'FERMENTED',   pkg:'Trays'},
+  {code:'202', name:'VANILLA YOGHURT 0.5LT CUPS',        cat:'FERMENTED',   pkg:'Trays'},
+  {code:'204', name:'STRAWBERRY YOGHURT 0.25LT CUPS',    cat:'FERMENTED',   pkg:'Trays'},
+  {code:'205', name:'STRAWBERRY YOGHURT 0.5LT CUPS',     cat:'FERMENTED',   pkg:'Trays'},
+  {code:'121', name:'TCA STRAWBERRY MILK SHAKE 200ML',   cat:'SHAKES',      pkg:'Trays'},
+  {code:'120', name:'TCA CHOCOLATE MILK SHAKE 200ML',    cat:'SHAKES',      pkg:'Trays'},
+  {code:'122', name:'TCA VANILLA MILK SHAKE 200ML',      cat:'SHAKES',      pkg:'Trays'},
+  {code:'432', name:'RINDLESS CHEDDAR 150g*90',          cat:'CHEESE',      pkg:'Cartons'},
+  {code:'430', name:'RINDLESS CHEDDAR 250g',             cat:'CHEESE',      pkg:'Cartons'},
+  {code:'433', name:'RINDLESS CHEDDAR 500g',             cat:'CHEESE',      pkg:'Cartons'},
+  {code:'436', name:'RINDLESS CHEDDAR 1KG',              cat:'CHEESE',      pkg:'Cartons'},
+  {code:'600', name:'SALTED BUTTER TUBS 1*18*0.5KG',     cat:'BUTTER',      pkg:'Cartons'},
+  {code:'601', name:'SALTED BUTTER TUBS 1*24*0.25KG',    cat:'BUTTER',      pkg:'Cartons'},
+  {code:'604', name:'SALTED BUTTER 1*20*0.5KG',          cat:'BUTTER',      pkg:'Cartons'},
+  {code:'605', name:'SALTED BUTTER 1*40*0.25KG',         cat:'BUTTER',      pkg:'Cartons'},
+  {code:'885', name:'SUPERFINE GHEE 20x0.5KG TINS',      cat:'GHEE',        pkg:'Cartons'},
+  {code:'882', name:'SUPERFINE GHEE 12x1KG TINS',        cat:'GHEE',        pkg:'Cartons'},
+  {code:'876', name:'SUPERFINE GHEE 6x3KG TINS',         cat:'GHEE',        pkg:'Cartons'},
+  {code:'1031',name:'DRIED WHOLE MILK POWDER 25KG BAG',  cat:'MILK POWDER', pkg:'Bags'},
+  {code:'1021',name:'DRIED SKIMMED MILK POWDER 25KG BAG',cat:'MILK POWDER', pkg:'Bags'},
+  {code:'1036',name:'DRIED POWDER 1*12*400G',             cat:'MILK POWDER', pkg:'Bags'},
+  {code:'1037',name:'DRIED MILK POWDER 1*12*900G',        cat:'MILK POWDER', pkg:'Bags'},
+];
+
+const CAT_COLORS = {
+  'TFA':'#1a6c8c','TCA':'#1a7a4a','ESL':'#c8401a','UHT':'#7a5c1a',
+  'LACTOSE FREE':'#6c3d8c','WATER':'#1a5c6c','FERMENTED':'#8c1a3d',
+  'SHAKES':'#5c6c1a','CHEESE':'#6c4a1a','BUTTER':'#7a6c1a',
+  'GHEE':'#1a3d6c','MILK POWDER':'#4a4a4a'
+};
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+const quantities = {};
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date();
+  document.getElementById('header-date').textContent =
+    today.toLocaleDateString('en-GB', {weekday:'short', day:'2-digit', month:'short', year:'numeric'}).toUpperCase();
+  document.getElementById('stock-date').value = today.toISOString().slice(0,10);
+  buildProductGrid();
+  PRODUCTS.forEach(p => quantities[p.code] = 0);
+});
+
+// ── BUILD PRODUCT GRID ───────────────────────────────────────────────────────
+function buildProductGrid() {
+  const grid = document.getElementById('product-grid');
+  const categories = [...new Set(PRODUCTS.map(p => p.cat))];
+  categories.forEach(cat => {
+    const prods = PRODUCTS.filter(p => p.cat === cat);
+    const color = CAT_COLORS[cat] || '#333';
+    let html = `
+      <div class="category-block">
+        <div class="category-header" style="background:${color}">
+          <span class="cat-badge">${cat}</span>
+          ${cat === 'TFA' ? 'Fresh Milk (TFA)' :
+            cat === 'TCA' ? 'Long Life Milk (TCA)' :
+            cat === 'ESL' ? 'Extended Shelf Life (ESL)' :
+            cat === 'FERMENTED' ? 'Fermented Products — Mala & Yoghurt' :
+            cat === 'MILK POWDER' ? 'Milk Powder' : cat}
+        </div>`;
+    prods.forEach((p, i) => {
+      html += `
+        <div class="product-row">
+          <div class="prod-code">${p.code}</div>
+          <div class="prod-name">${p.name}</div>
+          <div class="prod-qty">
+            <input type="number" min="0" step="0.01"
+              id="qty-${p.code}"
+              placeholder="${p.pkg}"
+              oninput="quantities['${p.code}']=parseFloat(this.value)||0"
+            />
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+    grid.innerHTML += html;
+  });
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+function goToStep2() {
+  const loc  = document.getElementById('location').value;
+  const date = document.getElementById('stock-date').value;
+  const name = document.getElementById('submitted-by').value.trim();
+  if (!loc)  return toast('Please select your location', 'error');
+  if (!date) return toast('Please select the stock date', 'error');
+  if (!name) return toast('Please enter your name', 'error');
+
+  document.getElementById('loc-display').textContent  = loc;
+  document.getElementById('date-display').textContent = new Date(date).toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'});
+
+  show('panel-1', false); show('panel-2', true);
+  setStep(2);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goToStep1() {
+  show('panel-2', false); show('panel-1', true);
+  setStep(1);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goToStep3() {
+  const filled = PRODUCTS.filter(p => quantities[p.code] > 0);
+  if (filled.length === 0) return toast('Please enter at least one quantity', 'error');
+
+  const date = document.getElementById('stock-date').value;
+  document.getElementById('rev-location').textContent = document.getElementById('location').value;
+  document.getElementById('rev-date').textContent     = new Date(date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  document.getElementById('rev-name').textContent     = document.getElementById('submitted-by').value;
+
+  let tbody = '', total = 0, count = 0;
+  PRODUCTS.forEach(p => {
+    const q = quantities[p.code];
+    if (q > 0) {
+      tbody += `<tr><td style="font-family:var(--mono);font-size:0.78rem">${p.code}</td><td>${p.name}</td><td>${p.cat}</td><td class="qty-val">${q.toLocaleString()}</td></tr>`;
+      total += q; count++;
+    }
+  });
+  // show zero-entry products too in lighter style
+  PRODUCTS.forEach(p => {
+    if (!quantities[p.code] || quantities[p.code] === 0) {
+      tbody += `<tr><td style="font-family:var(--mono);font-size:0.78rem;color:#bbb">${p.code}</td><td style="color:#bbb">${p.name}</td><td style="color:#bbb">${p.cat}</td><td class="qty-zero">—</td></tr>`;
+    }
+  });
+
+  document.getElementById('summary-body').innerHTML = tbody;
+  document.getElementById('rev-count').textContent = count;
+  document.getElementById('rev-total').textContent = total.toLocaleString();
+
+  show('panel-2', false); show('panel-3', true);
+  setStep(3);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── SUBMIT ─────────────────────────────────────────────────────────────────
+async function submitForm() {
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Submitting…';
+  toast('Sending to Google Sheets…', 'info');
+
+  const payload = {
+    location:    document.getElementById('location').value,
+    date:        document.getElementById('stock-date').value,
+    submittedBy: document.getElementById('submitted-by').value,
+    section:     document.getElementById('section').value,
+    notes:       document.getElementById('notes').value,
+    timestamp:   new Date().toISOString(),
+    quantities:  {}
+  };
+  PRODUCTS.forEach(p => { payload.quantities[p.code] = quantities[p.code] || 0; });
+
+  // If no real URL configured, demo mode
+  if (false) { // URL configured
+    await new Promise(r => setTimeout(r, 1500));
+    showSuccess(payload);
+    return;
+  }
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+    showSuccess(payload);
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '✓ Submit to Google Sheets';
+    toast('Submission failed. Check your internet connection.', 'error');
+  }
+}
+
+function showSuccess(payload) {
+  show('panel-3', false);
+  const ref = `REF-${payload.location.substring(0,3).toUpperCase()}-${payload.date.replace(/-/g,'')}-${Date.now().toString().slice(-4)}`;
+  document.getElementById('success-ref').textContent = ref;
+  document.getElementById('success-screen').style.display = 'block';
+  setStep(3, true);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function resetForm() {
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('location').value = '';
+  document.getElementById('submitted-by').value = '';
+  document.getElementById('notes').value = '';
+  PRODUCTS.forEach(p => {
+    quantities[p.code] = 0;
+    const el = document.getElementById(`qty-${p.code}`);
+    if (el) el.value = '';
+  });
+  show('panel-1', true);
+  setStep(1);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function show(id, visible) {
+  document.getElementById(id).style.display = visible ? 'block' : 'none';
+}
+
+function setStep(n, done) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById(`step-${i}`);
+    el.className = 'step';
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add(done ? 'done' : 'active');
+  });
+}
+
+function toast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `show ${type}`;
+  setTimeout(() => { t.className = ''; }, 3500);
+}
+</script>
+</body>
+</html>
