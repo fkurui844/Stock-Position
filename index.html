@@ -6,7 +6,7 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="theme-color" content="#080c10"/>
+<meta name="theme-color" id="theme-meta" content="#080c10"/>
 <title>KCC Stock</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
@@ -22,6 +22,14 @@
   --sat: env(safe-area-inset-top,0px);
   --sab: env(safe-area-inset-bottom,16px);
 }
+
+/* SMOOTH THEME TRANSITION */
+*, *::before, *::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease, box-shadow 0.25s ease !important;
+}
+/* But keep animations snappy */
+.spin, .ldot, .nb::before, .pbf, .arr { transition: none !important; }
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--tx);font-family:var(--body);min-height:100dvh;overflow-x:hidden;padding-bottom:calc(64px + var(--sab))}
@@ -267,6 +275,116 @@ textarea.fi{min-height:72px;resize:none}
 #tst.err{background:var(--rd);color:#fff}
 #tst.inf{background:var(--s2);color:var(--tx);border:1px solid var(--b2)}
 @media(min-width:768px){#tst{bottom:1.5rem;left:auto;right:1.5rem;width:auto;max-width:320px}}
+
+/* LIGHT MODE */
+html.light {
+  --bg:#f0f4f8; --s1:#ffffff; --s2:#f5f7fa; --s3:#e8edf3;
+  --b1:#d0dae6; --b2:#bac8d8;
+  --tx:#0f1e2e; --mu:#7a96b0; --mu2:#4a6a86;
+  --ac:#0088cc; --ac2:#e04520; --gr:#008c3a;
+  --yw:#c49000; --rd:#d42020; --pu:#7c3aed;
+}
+html.light body { background: var(--bg); }
+html.light #hdr { background: rgba(240,244,248,.97); border-bottom-color: var(--b1); }
+html.light #bnav { background: rgba(240,244,248,.97); border-top-color: var(--b1); }
+html.light .ec { box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+html.light .fi { background: #fff; border-color: var(--b1); }
+html.light .fi:focus { background: #fff; border-color: var(--ac); }
+html.light .fbar select, html.light .fbar input { background: #fff; border-color: var(--b1); }
+html.light .fbar { background: #fff; border-color: var(--b1); }
+html.light .ftoggle { background: #fff; border-color: var(--b1); }
+html.light .kpi { background: #fff; }
+html.light .krow { background: var(--b1); border-color: var(--b1); }
+html.light .vtab { background: #fff; }
+html.light .vtab.on { background: var(--s3); }
+html.light .avc { background: #fff; }
+html.light .avg { background: var(--b1); border-color: var(--b1); }
+html.light .lcard { background: #fff; }
+html.light .lcards { background: var(--b1); border-color: var(--b1); }
+html.light .hmw { background: #fff; border-color: var(--b1); }
+html.light .hmt th { background: var(--s2); }
+html.light .hmt td.pnc { background: #fff; }
+html.light .hmt tr:nth-child(even) td.pnc { background: var(--s2); }
+html.light .h0{background:#e8eef4;color:#9ab0c4}
+html.light .h1{background:#c8e8d4;color:#2a7a48}
+html.light .h2{background:#a0d4b8;color:#1a6038}
+html.light .h3{background:#70c098;color:#0e4828}
+html.light .h4{background:#40aa78;color:#062a18}
+html.light .h5{background:#18924c;color:#ffffff}
+html.light .crow td { background: var(--s3) !important; }
+html.light .rev-meta { background: var(--b1); border-color: var(--b1); }
+html.light .rcell { background: #fff; }
+html.light .rlist { background: var(--b1); border-color: var(--b1); }
+html.light .ri { background: #fff; }
+html.light .ri:nth-child(even) { background: var(--s2); }
+html.light .rsumm { background: var(--s2); border-color: var(--b1); }
+html.light .stp { border-right-color: var(--b1); }
+html.light .stepbar { border-color: var(--b1); }
+html.light .sc { background: #fff; border-color: var(--b1); }
+html.light .sc.on { background: var(--s3); }
+html.light .chip.off { border-color: var(--b2); color: var(--mu2); }
+html.light .dtabs { background: #fff; border-color: var(--b1); }
+html.light .ibt { background: #fff; border-color: var(--b1); }
+html.light #tst.inf { background: #fff; border-color: var(--b1); }
+html.light .bmark { background: linear-gradient(145deg, var(--ac), #004488); }
+
+
+/* TREND VIEW */
+.trend-ctl{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem;background:var(--s1);border:1px solid var(--b1);padding:.9rem}
+@media(min-width:600px){.trend-ctl{grid-template-columns:repeat(3,1fr)}}
+.tctlg{display:flex;flex-direction:column;gap:4px}
+.tsel{background:var(--bg);border:1px solid var(--b2);color:var(--tx);min-height:44px;padding:8px 12px;font-family:var(--mono);font-size:.82rem;outline:none;-webkit-appearance:none;appearance:none;transition:border-color .15s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a6080' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;cursor:pointer}
+.tsel:focus{border-color:var(--ac)}
+.tcharts{display:flex;flex-direction:column;gap:1px;background:var(--b1);border:1px solid var(--b1);margin-bottom:1rem}
+.tchart-card{background:var(--s1);padding:1rem}
+.tchart-card:nth-child(even){background:var(--s2)}
+.tchart-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;gap:.5rem}
+.tchart-name{font-size:.84rem;font-weight:700;line-height:1.3;flex:1}
+.tchart-badge{font-family:var(--mono);font-size:.58rem;padding:2px 7px;border:1px solid var(--b2);color:var(--mu2);flex-shrink:0}
+.tchart-meta{display:flex;gap:1rem;font-family:var(--mono);font-size:.6rem;color:var(--mu);margin-bottom:.5rem;flex-wrap:wrap}
+.tchart-meta .up{color:var(--gr)}.tchart-meta .dn{color:var(--rd)}.tchart-meta .nc{color:var(--mu2)}
+.sparkline-wrap{position:relative;height:56px;width:100%;overflow:hidden}
+.sparkline-wrap svg{width:100%;height:100%}
+.tchart-vals{display:flex;justify-content:space-between;font-family:var(--mono);font-size:.58rem;color:var(--mu);margin-top:3px}
+
+/* PICK STOCK */
+.pick-wrap{display:flex;flex-direction:column;gap:1rem}
+.pick-log-hdr{margin-top:.5rem}
+.pick-log-list{display:flex;flex-direction:column;gap:1px;background:var(--b1);border:1px solid var(--b1);margin-bottom:1rem}
+.pick-item{background:var(--s1);padding:.85rem 1rem}
+.pick-item:nth-child(even){background:var(--s2)}
+.pick-item-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;gap:.5rem}
+.pick-item-loc{font-weight:700;font-size:.84rem}
+.pick-item-time{font-family:var(--mono);font-size:.6rem;color:var(--mu);text-align:right}
+.pick-item-by{font-family:var(--mono);font-size:.62rem;color:var(--mu2);margin-bottom:4px}
+.pick-items-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.pick-qty-chip{font-family:var(--mono);font-size:.58rem;padding:3px 8px;background:rgba(255,204,0,.12);border:1px solid rgba(255,204,0,.3);color:var(--yw);border-radius:3px}
+.pp-row{display:grid;grid-template-columns:52px 1fr 110px;border:1px solid var(--b1);border-top:none;background:var(--s1);min-height:52px}
+.pp-row:nth-child(even){background:var(--s2)}
+.pp-row:active{background:var(--s3)}
+.pp-avail{padding:9px 6px;font-family:var(--mono);font-size:.62rem;color:var(--mu2);border-right:1px solid var(--b1);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px}
+.pp-avail span{font-weight:700;color:var(--tx)}
+.pp-name{padding:9px 12px;font-size:.8rem;font-weight:500;display:flex;align-items:center;border-right:1px solid var(--b1);line-height:1.3}
+.pp-pick{display:flex;position:relative}
+.pp-pick input{width:100%;border:none;background:transparent;text-align:center;font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--yw);padding:0 4px;-webkit-appearance:none}
+.pp-pick input:focus{background:rgba(255,204,0,.08);outline:2px solid var(--yw);outline-offset:-2px}
+.pp-pick input::placeholder{color:var(--mu);font-size:.72rem;font-family:var(--body);font-weight:400}
+.delta-badge{font-family:var(--mono);font-size:.62rem;padding:2px 6px;border-radius:3px;margin-left:4px;vertical-align:middle}
+.delta-up{background:rgba(0,204,85,.15);color:var(--gr);border:1px solid rgba(0,204,85,.25)}
+.delta-dn{background:rgba(255,68,68,.15);color:var(--rd);border:1px solid rgba(255,68,68,.25)}
+
+/* Light mode overrides for new elements */
+html.light .tsel{background:#fff;border-color:var(--b1)}
+html.light .tcharts{background:var(--b1);border-color:var(--b1)}
+html.light .tchart-card{background:#fff}
+html.light .tchart-card:nth-child(even){background:var(--s2)}
+html.light .pick-log-list{background:var(--b1);border-color:var(--b1)}
+html.light .pick-item{background:#fff}
+html.light .pick-item:nth-child(even){background:var(--s2)}
+html.light .pp-row{background:#fff}
+html.light .pp-row:nth-child(even){background:var(--s2)}
+html.light .trend-ctl{background:#fff;border-color:var(--b1)}
+
 </style>
 </head>
 <body>
@@ -291,6 +409,7 @@ textarea.fi{min-height:72px;resize:none}
     </div>
     <div class="hdr-r">
       <div class="lpill"><div class="ldot"></div>LIVE</div>
+      <button class="ibt" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark mode" style="font-size:1.1rem">🌙</button>
       <button class="ibt" onclick="refreshDash()" title="Refresh">↺</button>
     </div>
   </div>
@@ -494,9 +613,120 @@ textarea.fi{min-height:72px;resize:none}
     <button class="vtab on" onclick="switchV('heatmap',this)"><span class="vi">🌡️</span>Heatmap</button>
     <button class="vtab"    onclick="switchV('avail',this)"><span class="vi">📦</span>Avail.</button>
     <button class="vtab"    onclick="switchV('locs',this)"><span class="vi">📍</span>Locations</button>
+    <button class="vtab"    onclick="switchV('trend',this)"><span class="vi">📈</span>Trends</button>
+    <button class="vtab"    onclick="switchV('pick',this)"><span class="vi">⬇️</span>Pick Stock</button>
   </div>
 
   <div class="rln" id="dash-ts">Loading…</div>
+  <!-- TREND PANEL -->
+  <div id="vp-trend" class="vp">
+    <div class="shdr">
+      <div class="sttl">Stock Trends</div>
+      <span style="font-family:var(--mono);font-size:.58rem;color:var(--mu)">Historical stock levels over time</span>
+    </div>
+
+    <!-- Trend filters -->
+    <div class="trend-ctl">
+      <div class="tctlg">
+        <span class="fgl">Location</span>
+        <select id="tr-loc" onchange="renderTrend()" class="tsel">
+          <option value="">All Locations</option>
+        </select>
+      </div>
+      <div class="tctlg">
+        <span class="fgl">Product</span>
+        <select id="tr-prod" onchange="renderTrend()" class="tsel">
+          <option value="">All Products (Total)</option>
+        </select>
+      </div>
+      <div class="tctlg">
+        <span class="fgl">Period</span>
+        <select id="tr-period" onchange="renderTrend()" class="tsel">
+          <option value="7">Last 7 days</option>
+          <option value="14">Last 14 days</option>
+          <option value="30" selected>Last 30 days</option>
+          <option value="90">Last 90 days</option>
+          <option value="0">All time</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Charts grid -->
+    <div id="trend-charts" class="tcharts"></div>
+  </div>
+
+  <!-- PICK STOCK PANEL -->
+  <div id="vp-pick" class="vp">
+    <div class="shdr">
+      <div class="sttl">Pick Stock</div>
+      <span style="font-family:var(--mono);font-size:.58rem;color:var(--mu)">Record stock removed from a location — updates dashboard instantly</span>
+    </div>
+
+    <div class="pick-wrap">
+      <!-- Pick form -->
+      <div class="ec" style="border-top-color:var(--yw)">
+        <div class="elbl" style="color:var(--yw)">STOCK PICK ENTRY</div>
+        <div class="ettl">Record a Stock Pick</div>
+
+        <div class="g2">
+          <div class="field">
+            <label>From Location <span class="req">*</span></label>
+            <select id="pk-loc" class="fi sel" onchange="loadPickProducts()">
+              <option value="">— Select location —</option>
+              <optgroup label="Depots">
+                <option>DANDORA</option><option>NAIROBI SALES DEPOT</option>
+                <option>ELDORET</option><option>SOTIK (KERICHO)</option>
+                <option>MIRITINI</option><option>NAKURU</option>
+                <option>NANYUKI</option><option>KISUMU</option>
+                <option>NYAHURURU DEPOT</option><option>NYAMBENE DEPOT</option>
+              </optgroup>
+              <optgroup label="Factories">
+                <option>NYAHURURU FACTORY</option><option>SOTIK FACTORY</option>
+                <option>ELDORET FACTORY</option><option>NAIVASHA</option>
+                <option>KIGANJO</option><option>DANDORA FACTORY</option>
+                <option>KITALE</option><option>MOMBASA FACTORY</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="field">
+            <label>Pick Date/Time</label>
+            <input type="datetime-local" id="pk-time" class="fi"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Picked By <span class="req">*</span></label>
+          <input type="text" id="pk-by" class="fi" placeholder="Name of person picking" autocomplete="name"/>
+        </div>
+
+        <div class="field">
+          <label>Reason / Destination</label>
+          <input type="text" id="pk-reason" class="fi" placeholder="e.g. Delivery to retailer, Transfer to depot…"/>
+        </div>
+
+        <!-- Product pick rows populated dynamically -->
+        <div id="pick-products">
+          <div style="font-family:var(--mono);font-size:.72rem;color:var(--mu);padding:1.5rem;text-align:center;border:1px dashed var(--b2)">
+            Select a location above to see available stock
+          </div>
+        </div>
+
+        <div class="brow" style="margin-top:1.25rem">
+          <button class="btn" style="background:var(--yw);color:#000;border-color:var(--yw);min-height:52px" id="pk-btn" onclick="submitPick()">⬇️ Confirm Stock Pick</button>
+          <button class="btn bg2" onclick="clearPick()">Clear</button>
+        </div>
+      </div>
+
+      <!-- Recent picks log -->
+      <div class="pick-log-hdr">
+        <div class="sttl" style="margin-bottom:.5rem">Recent Picks</div>
+      </div>
+      <div id="pick-log" class="pick-log-list">
+        <div style="font-family:var(--mono);font-size:.72rem;color:var(--mu);padding:1.5rem;text-align:center">No picks recorded yet</div>
+      </div>
+    </div>
+  </div>
+
 
   <!-- Heatmap -->
   <div id="vp-heatmap" class="vp on">
@@ -552,7 +782,7 @@ textarea.fi{min-height:72px;resize:none}
 </nav>
 
 <script>
-const SURL='https://script.google.com/macros/s/AKfycbz79z-h3TqmFD2PKQnkjSObLr9ribxncTcesmt2OlN3DMilt84yBJlAKYZK24VOI_qr/exec';
+const SURL='https://script.google.com/macros/s/AKfycbyu4cusB0g7SphhUKDtvCp5jABVUrcqY90_N7-S7zJa367rkB-wW9ejvebvalSPTNdi/exec';
 const PRODS=[
   {c:'20',n:'GOLD CROWN TFA 1/2LT 1x12',k:'TFA'},
   {c:'21',n:'KCC FRESH TFA 1x12 x 1/2lt',k:'TFA'},
@@ -705,14 +935,30 @@ async function loadDash(){
 }
 function refreshDash(){if(document.getElementById('pg-dashboard').classList.contains('on')){dashLoaded=false;loadDash();}else showPage('dashboard');}
 
-function processData(json){
-  stockData={};metaData={};
-  const latest={};
-  (json.rows||[]).forEach(r=>{if(!latest[r.location]||new Date(r.timestamp)>new Date(latest[r.location].timestamp))latest[r.location]=r;});
-  Object.entries(latest).forEach(([loc,r])=>{stockData[loc]=r.quantities||{};metaData[loc]={lastUpdated:r.timestamp,submittedBy:r.submittedBy};});
-  updateKPIs();applyF();
+// processData moved to trend engine above
+function demoData(){
+  const rows=[];
+  const names=['J. Kamau','M. Odhiambo','F. Wanjiku','P. Otieno'];
+  ALL_L.slice(0,10).forEach(loc=>{
+    // Generate 14 days of history per location
+    for(let d=13;d>=0;d--){
+      const q={};
+      PRODS.forEach(p=>{
+        // Simulate realistic stock trend: starts high, depletes, restocks
+        const base=Math.floor(Math.random()*8000)+1000;
+        const dayFactor=1-(d/30)*Math.random();
+        q[p.c]=Math.random()>.25?Math.floor(base*dayFactor):0;
+      });
+      rows.push({
+        location:loc,
+        timestamp:new Date(Date.now()-d*86400000-Math.random()*3600000).toISOString(),
+        submittedBy:names[Math.floor(Math.random()*4)],
+        quantities:q
+      });
+    }
+  });
+  return{rows};
 }
-function demoData(){const rows=[];ALL_L.slice(0,12).forEach(loc=>{const q={};PRODS.forEach(p=>{q[p.c]=Math.random()>.3?Math.floor(Math.random()*9000):0;});rows.push({location:loc,timestamp:new Date(Date.now()-Math.random()*86400000).toISOString(),submittedBy:['J. Kamau','M. Odhiambo','F. Wanjiku','P. Otieno'][Math.floor(Math.random()*4)],quantities:q});});return{rows};}
 
 function updateKPIs(){
   let total=0,prods=new Set(),topL='',topQ=0,lastTs=null,lastBy='';
@@ -804,6 +1050,406 @@ function renderLocsDsk(){
 
 function toast(msg,type='inf'){const t=document.getElementById('tst');t.textContent=msg;t.className=`on ${type}`;clearTimeout(t._t);t._t=setTimeout(()=>t.className='',3500);}
 setInterval(()=>{if(document.getElementById('pg-dashboard').classList.contains('on'))loadDash();},5*60*1000);
+
+
+// ══════════════════════════════════════════════════════════════════
+// TREND ENGINE
+// ══════════════════════════════════════════════════════════════════
+let allRows = [];   // all historical rows kept in memory
+
+function processData(json) {
+  stockData = {}; metaData = {};
+  allRows = json.rows || [];
+
+  const latest = {};
+  allRows.forEach(r => {
+    if (!latest[r.location] || new Date(r.timestamp) > new Date(latest[r.location].timestamp))
+      latest[r.location] = r;
+  });
+  Object.entries(latest).forEach(([loc, r]) => {
+    stockData[loc] = r.quantities || {};
+    metaData[loc] = { lastUpdated: r.timestamp, submittedBy: r.submittedBy };
+  });
+
+  // Populate trend selectors
+  populateTrendSelectors();
+  updateKPIs(); applyF();
+  renderPickLog();
+}
+
+function populateTrendSelectors() {
+  const locSel  = document.getElementById('tr-loc');
+  const prodSel = document.getElementById('tr-prod');
+  if (!locSel || !prodSel) return;
+
+  const existingLoc  = locSel.value;
+  const existingProd = prodSel.value;
+
+  // Locations that have data
+  const activeLocs = [...new Set(allRows.map(r => r.location))].sort();
+  locSel.innerHTML = '<option value="">All Locations (combined)</option>' +
+    activeLocs.map(l => `<option value="${l}" ${l===existingLoc?'selected':''}>${l}</option>`).join('');
+
+  // Products
+  prodSel.innerHTML = '<option value="">All Products (total cartons)</option>' +
+    PRODS.map(p => `<option value="${p.c}" ${p.c===existingProd?'selected':''}>[${p.c}] ${p.n}</option>`).join('');
+}
+
+function renderTrend() {
+  const container = document.getElementById('trend-charts');
+  if (!container) return;
+
+  const selLoc    = document.getElementById('tr-loc').value;
+  const selProd   = document.getElementById('tr-prod').value;
+  const periodDays= parseInt(document.getElementById('tr-period').value) || 0;
+
+  if (!allRows.length) {
+    container.innerHTML = '<div style="padding:2.5rem;text-align:center;color:var(--mu);font-family:var(--mono)">No historical data yet. Data accumulates as your team submits daily entries.</div>';
+    return;
+  }
+
+  // Filter rows by period
+  const cutoff = periodDays > 0 ? Date.now() - periodDays * 86400000 : 0;
+  let rows = allRows.filter(r => new Date(r.timestamp).getTime() >= cutoff);
+
+  // Which locations to chart?
+  const locsToChart = selLoc
+    ? [selLoc]
+    : [...new Set(rows.map(r => r.location))].slice(0, 12); // max 12 charts
+
+  if (!locsToChart.length) {
+    container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--mu);font-family:var(--mono)">No data for selected period</div>';
+    return;
+  }
+
+  let html = '';
+
+  locsToChart.forEach(loc => {
+    // Get all entries for this location, sorted by time
+    const locRows = rows
+      .filter(r => r.location === loc)
+      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+    if (!locRows.length) return;
+
+    // Build time series
+    const series = locRows.map(r => {
+      const qty = selProd
+        ? (r.quantities?.[selProd] || 0)
+        : Object.values(r.quantities || {}).reduce((s, v) => s + (v || 0), 0);
+      return { ts: new Date(r.timestamp), qty };
+    });
+
+    if (series.length < 1) return;
+
+    const isDep   = DEPS.includes(loc);
+    const prodName = selProd ? (PRODS.find(p => p.c === selProd)?.n || selProd) : 'All Products';
+    const latest  = series[series.length - 1].qty;
+    const prev    = series.length > 1 ? series[series.length - 2].qty : latest;
+    const delta   = latest - prev;
+    const pct     = prev > 0 ? Math.round(delta / prev * 100) : 0;
+    const trendClass = delta > 0 ? 'up' : delta < 0 ? 'dn' : 'nc';
+    const trendArrow = delta > 0 ? '▲' : delta < 0 ? '▼' : '●';
+
+    // SVG sparkline
+    const maxY = Math.max(...series.map(s => s.qty), 1);
+    const minY = Math.min(...series.map(s => s.qty), 0);
+    const range = maxY - minY || 1;
+    const W = 600, H = 56;
+    const pts = series.map((s, i) => {
+      const x = series.length === 1 ? W / 2 : (i / (series.length - 1)) * W;
+      const y = H - ((s.qty - minY) / range) * (H - 6) - 3;
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+
+    // Area fill
+    const firstX = series.length === 1 ? W/2 : 0;
+    const lastX  = series.length === 1 ? W/2 : W;
+    const areaPts = `${firstX},${H} ${pts} ${lastX},${H}`;
+
+    const acColor = delta >= 0 ? 'var(--gr)' : 'var(--rd)';
+
+    html += `<div class="tchart-card">
+      <div class="tchart-hdr">
+        <div class="tchart-name">${loc}</div>
+        <span class="tchart-badge ${isDep?'dep':'fac'}">${isDep?'DEPOT':'FACTORY'}</span>
+      </div>
+      <div class="tchart-meta">
+        <span>${prodName}</span>
+        <span class="${trendClass}">${trendArrow} ${Math.abs(delta).toLocaleString()} (${pct > 0 ? '+' : ''}${pct}% vs prev)</span>
+        <span>${series.length} data point${series.length!==1?'s':''}</span>
+      </div>
+      <div class="sparkline-wrap">
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="g-${loc.replace(/\W/g,'')}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${acColor}" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="${acColor}" stop-opacity="0.02"/>
+            </linearGradient>
+          </defs>
+          <polygon points="${areaPts}" fill="url(#g-${loc.replace(/[^a-zA-Z0-9]/g,'')})" />
+          <polyline points="${pts}" fill="none" stroke="${acColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          ${series.map((s,i)=>{
+            const x = series.length===1 ? W/2 : (i/(series.length-1))*W;
+            const y = H - ((s.qty - minY)/range)*(H-6) - 3;
+            return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3" fill="${acColor}"/>`;
+          }).join('')}
+        </svg>
+      </div>
+      <div class="tchart-vals">
+        <span>${series[0].ts.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}: ${series[0].qty.toLocaleString()}</span>
+        <span style="font-weight:700;color:${acColor}">${latest.toLocaleString()} cartons</span>
+        <span>${series[series.length-1].ts.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html || '<div style="padding:2rem;text-align:center;color:var(--mu);font-family:var(--mono)">No data for this selection</div>';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PICK STOCK — Real-time deduction
+// ══════════════════════════════════════════════════════════════════
+let pickQtys = {};
+let recentPicks = JSON.parse(localStorage.getItem('kcc-picks') || '[]');
+let lastEtag = null;  // for polling to detect new submissions
+
+// Populate pick product rows when a location is selected
+function loadPickProducts() {
+  const loc = document.getElementById('pk-loc').value;
+  const container = document.getElementById('pick-products');
+  pickQtys = {};
+
+  if (!loc) {
+    container.innerHTML = '<div style="font-family:var(--mono);font-size:.72rem;color:var(--mu);padding:1.5rem;text-align:center;border:1px dashed var(--b2)">Select a location above to see available stock</div>';
+    return;
+  }
+
+  const locStock = stockData[loc] || {};
+  const cats = [...new Set(PRODS.map(p => p.k))];
+  const CB_PICK = {TFA:'#0e3050',TCA:'#0e3a20',ESL:'#50200e',UHT:'#3a300e','LACTOSE FREE':'#320e50',WATER:'#0e2a30',FERMENTED:'#4a1030',SHAKES:'#2a301a',CHEESE:'#302010',BUTTER:'#302e10',GHEE:'#0e2030','MILK POWDER':'#1e1e1e'};
+
+  let html = '';
+  cats.forEach(cat => {
+    const ps = PRODS.filter(p => p.k === cat);
+    const bg = CB_PICK[cat] || '#16202e';
+    html += `<div class="cat-block">
+      <div class="chdr" style="background:${bg};position:static">
+        <span class="ctag">${cat}</span>${{TFA:'Fresh Milk',TCA:'Long Life',ESL:'ESL/Aseptic',FERMENTED:'Mala & Yoghurt','MILK POWDER':'Milk Powder'}[cat]||cat}
+      </div>`;
+    ps.forEach(p => {
+      const avail = locStock[p.c] || 0;
+      pickQtys[p.c] = 0;
+      const color = avail > 0 ? 'var(--gr)' : 'var(--rd)';
+      html += `<div class="pp-row">
+        <div class="pp-avail"><div style="font-family:var(--mono);font-size:.52rem;color:var(--mu)">AVAIL</div><span id="avail-${p.c}" style="color:${color}">${avail > 0 ? avail.toLocaleString() : '0'}</span></div>
+        <div class="pp-name">${p.n}</div>
+        <div class="pp-pick">
+          <input type="number" min="0" step="1" inputmode="numeric"
+            id="pk-${p.c}" placeholder="Pick"
+            oninput="pickQtys['${p.c}']=parseFloat(this.value)||0; validatePick('${p.c}', ${avail})"
+            ${avail === 0 ? 'disabled style="opacity:.3"' : ''}/>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+}
+
+function validatePick(code, avail) {
+  const input = document.getElementById(`pk-${code}`);
+  const val   = parseFloat(input.value) || 0;
+  if (val > avail) {
+    input.style.color = 'var(--rd)';
+    input.title = `Cannot pick more than ${avail} available`;
+  } else {
+    input.style.color = 'var(--yw)';
+    input.title = '';
+  }
+}
+
+async function submitPick() {
+  const loc    = document.getElementById('pk-loc').value;
+  const by     = document.getElementById('pk-by').value.trim();
+  const reason = document.getElementById('pk-reason').value.trim();
+  const time   = document.getElementById('pk-time').value || new Date().toISOString();
+
+  if (!loc)  return toast('Please select a location', 'err');
+  if (!by)   return toast('Please enter your name', 'err');
+
+  const picks = Object.entries(pickQtys).filter(([,q]) => q > 0);
+  if (!picks.length) return toast('Please enter at least one quantity to pick', 'err');
+
+  // Validate none exceeds available
+  const locStock = stockData[loc] || {};
+  for (const [code, qty] of picks) {
+    const avail = locStock[code] || 0;
+    if (qty > avail) {
+      const prod = PRODS.find(p => p.c === code);
+      return toast(`Cannot pick ${qty} of ${prod?.n || code} — only ${avail} available`, 'err');
+    }
+  }
+
+  const btn = document.getElementById('pk-btn');
+  btn.disabled = true; btn.textContent = '⏳ Processing…';
+
+  // Build new quantities (deduct picks from current stock)
+  const newQtys = { ...(stockData[loc] || {}) };
+  picks.forEach(([code, qty]) => {
+    newQtys[code] = Math.max(0, (newQtys[code] || 0) - qty);
+  });
+
+  const payload = {
+    location:    loc,
+    date:        new Date(time).toISOString().slice(0, 10),
+    submittedBy: by,
+    section:     'PICK',
+    notes:       `STOCK PICK — ${reason || 'No reason given'} | Picked: ${picks.map(([c,q])=>`[${c}]×${q}`).join(', ')}`,
+    timestamp:   new Date(time).toISOString(),
+    quantities:  newQtys,
+    isPick:      true,
+    pickedItems: Object.fromEntries(picks)
+  };
+
+  try {
+    await fetch(SURL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+
+    // Immediately update local state so dashboard reflects change without waiting for server
+    stockData[loc] = newQtys;
+    metaData[loc]  = { lastUpdated: new Date().toISOString(), submittedBy: by };
+
+    // Save pick to local log
+    const pickRecord = { loc, by, reason, time: new Date().toISOString(), items: Object.fromEntries(picks) };
+    recentPicks.unshift(pickRecord);
+    if (recentPicks.length > 50) recentPicks.pop();
+    localStorage.setItem('kcc-picks', JSON.stringify(recentPicks));
+
+    // Refresh all dashboard views
+    updateKPIs(); applyF(); renderPickLog();
+    toast(`✓ Stock pick recorded — ${picks.length} product${picks.length>1?'s':''} updated`, 'ok');
+    clearPick();
+  } catch(e) {
+    toast('Pick failed — check connection', 'err');
+  }
+
+  btn.disabled = false; btn.textContent = '⬇️ Confirm Stock Pick';
+}
+
+function clearPick() {
+  document.getElementById('pk-loc').value  = '';
+  document.getElementById('pk-by').value   = '';
+  document.getElementById('pk-reason').value = '';
+  document.getElementById('pk-time').value  = '';
+  pickQtys = {};
+  document.getElementById('pick-products').innerHTML = '<div style="font-family:var(--mono);font-size:.72rem;color:var(--mu);padding:1.5rem;text-align:center;border:1px dashed var(--b2)">Select a location above to see available stock</div>';
+}
+
+function renderPickLog() {
+  const el = document.getElementById('pick-log');
+  if (!el) return;
+  if (!recentPicks.length) {
+    el.innerHTML = '<div style="font-family:var(--mono);font-size:.72rem;color:var(--mu);padding:1.5rem;text-align:center">No picks recorded yet</div>';
+    return;
+  }
+  el.innerHTML = recentPicks.slice(0, 20).map(p => {
+    const ds = new Date(p.time).toLocaleString('en-GB', {day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    const itemList = Object.entries(p.items).map(([code, qty]) => {
+      const prod = PRODS.find(pr => pr.c === code);
+      return `<span class="pick-qty-chip">-${qty} ${prod?.n || code}</span>`;
+    }).join('');
+    return `<div class="pick-item">
+      <div class="pick-item-top">
+        <div class="pick-item-loc">${p.loc}</div>
+        <div class="pick-item-time">${ds}</div>
+      </div>
+      <div class="pick-item-by">👤 ${p.by}${p.reason ? ' · ' + p.reason : ''}</div>
+      <div class="pick-items-list">${itemList}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// REAL-TIME POLLING — checks for new submissions every 30s
+// ══════════════════════════════════════════════════════════════════
+let pollInterval = null;
+
+function startPolling() {
+  if (pollInterval) return;
+  pollInterval = setInterval(async () => {
+    if (!document.getElementById('pg-dashboard').classList.contains('on')) return;
+    try {
+      const res  = await fetch(`${SURL}?action=getDashboard&t=${Date.now()}`);
+      const json = await res.json();
+      // Check if data changed by comparing total rows
+      const newCount = (json.rows||[]).length;
+      const oldCount = allRows.length;
+      if (newCount !== oldCount || JSON.stringify((json.rows||[]).map(r=>r.timestamp).sort()) !== JSON.stringify(allRows.map(r=>r.timestamp).sort())) {
+        processData(json);
+        document.getElementById('dash-ts').textContent = `Auto-updated: ${new Date().toLocaleString('en-GB')}`;
+        // Flash the KPI strip to signal update
+        const krow = document.querySelector('.krow');
+        if (krow) { krow.style.outline = '2px solid var(--gr)'; setTimeout(() => krow.style.outline = '', 2000); }
+        toast('📡 Stock data updated', 'ok');
+      }
+    } catch(e) {}
+  }, 30000); // every 30 seconds
+}
+
+// Override switchV to trigger trend render + start polling on dashboard
+const _origSwitchV = switchV;
+function switchV(v, btn) {
+  _origSwitchV(v, btn);
+  if (v === 'trend') renderTrend();
+  if (v === 'pick')  { renderPickLog(); loadPickProducts(); }
+}
+
+// Override renderV to include trend
+const _origRenderV = renderV;
+function renderV() {
+  _origRenderV();
+  if (curV === 'trend') renderTrend();
+  if (curV === 'pick')  renderPickLog();
+}
+
+// Start polling when dashboard opens
+const _origShowPage = showPage;
+function showPage(p) {
+  _origShowPage(p);
+  if (p === 'dashboard') { startPolling(); }
+}
+
+// Set default pick datetime to now
+document.addEventListener('DOMContentLoaded', () => {
+  const pkTime = document.getElementById('pk-time');
+  if (pkTime) pkTime.value = new Date().toISOString().slice(0,16);
+  renderPickLog();
+});
+
+// ── THEME TOGGLE ──────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  localStorage.setItem('kcc-theme', isLight ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isLight ? '☀️' : '🌙';
+  document.getElementById('theme-meta').content = isLight ? '#f0f4f8' : '#080c10';
+}
+
+// Apply saved theme on load
+(function() {
+  const saved = localStorage.getItem('kcc-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const useDark = saved ? saved === 'dark' : prefersDark;
+  if (!useDark) {
+    document.documentElement.classList.add('light');
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('theme-btn');
+      if (btn) btn.textContent = '☀️';
+      document.getElementById('theme-meta').content = '#f0f4f8';
+    });
+  }
+})();
+
 </script>
 </body>
 </html>
