@@ -849,16 +849,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   buildGrid();
 });
 
-function showPage(p){
-  document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));
-  document.querySelectorAll('.nb').forEach(b=>{b.classList.remove('on','et');});
-  document.getElementById('pg-'+p).classList.add('on');
-  const bn=document.getElementById('bn-'+p);
-  bn.classList.add('on');if(p==='entry')bn.classList.add('et');
-  const de=document.getElementById('dt-e'),dd=document.getElementById('dt-d');
-  if(de){de.className='dtab'+(p==='entry'?' ae':'');dd.className='dtab'+(p==='dashboard'?' ad':'');}
-  if(p==='dashboard'&&!dashLoaded)loadDash();
-  window.scrollTo({top:0,behavior:'smooth'});
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(e => e.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b => { b.classList.remove('on','et'); });
+  document.getElementById('pg-' + p).classList.add('on');
+  const bn = document.getElementById('bn-' + p);
+  bn.classList.add('on');
+  if (p === 'entry') bn.classList.add('et');
+  const de = document.getElementById('dt-e'), dd = document.getElementById('dt-d');
+  if (de) { de.className = 'dtab' + (p==='entry' ? ' ae' : ''); dd.className = 'dtab' + (p==='dashboard' ? ' ad' : ''); }
+  if (p === 'dashboard') {
+    if (!dashLoaded) loadDash();
+    startPolling();
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function buildGrid(){
@@ -989,8 +993,21 @@ function applyF(){
 }
 function clearF(){['f-cat','f-loc','f-type','f-status'].forEach(id=>document.getElementById(id).value='');document.getElementById('f-q').value='';applyF();}
 
-function switchV(v,btn){curV=v;document.querySelectorAll('.vtab').forEach(t=>t.classList.remove('on'));btn.classList.add('on');document.querySelectorAll('.vp').forEach(p=>p.classList.remove('on'));document.getElementById('vp-'+v).classList.add('on');renderV();}
-function renderV(){if(curV==='heatmap')renderHM();if(curV==='avail')renderAV();if(curV==='locs')renderLocs();}
+function switchV(v, btn) {
+  curV = v;
+  document.querySelectorAll('.vtab').forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.vp').forEach(p => p.classList.remove('on'));
+  document.getElementById('vp-' + v).classList.add('on');
+  renderV();
+}
+function renderV() {
+  if (curV === 'heatmap') renderHM();
+  if (curV === 'avail')   renderAV();
+  if (curV === 'locs')    renderLocs();
+  if (curV === 'trend')   renderTrend();
+  if (curV === 'pick')    renderPickLog();
+}
 
 function renderHM(){
   const tbl=document.getElementById('hm-tbl');
@@ -1397,28 +1414,7 @@ function startPolling() {
   }, 30000); // every 30 seconds
 }
 
-// Override switchV to trigger trend render + start polling on dashboard
-const _origSwitchV = switchV;
-function switchV(v, btn) {
-  _origSwitchV(v, btn);
-  if (v === 'trend') renderTrend();
-  if (v === 'pick')  { renderPickLog(); loadPickProducts(); }
-}
 
-// Override renderV to include trend
-const _origRenderV = renderV;
-function renderV() {
-  _origRenderV();
-  if (curV === 'trend') renderTrend();
-  if (curV === 'pick')  renderPickLog();
-}
-
-// Start polling when dashboard opens
-const _origShowPage = showPage;
-function showPage(p) {
-  _origShowPage(p);
-  if (p === 'dashboard') { startPolling(); }
-}
 
 // Set default pick datetime to now
 document.addEventListener('DOMContentLoaded', () => {
